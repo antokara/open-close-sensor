@@ -7,6 +7,12 @@
  */
 #define FAULT_LED_BLINK_INTERVAL_MS 250
 
+/**
+ * delay in ms after Serial.begin() before using Serial
+ * to allow time for serial monitor to connect
+ */
+#define SETUP_DELAY_MS 2500
+
 class Device
 {
 private:

@@ -14,8 +14,6 @@ void setup()
   device->setup();
   sensor = new Sensor(device);
   sensor->setup();
-
-  delay(5000);
 }
 
 void loop()

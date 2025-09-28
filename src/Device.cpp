@@ -8,6 +8,9 @@ void Device::setup()
 
     // Start serial communication at 115200 baud
     Serial.begin(115200);
+
+    // Wait for serial monitor to open
+    delay(SETUP_DELAY_MS);
 }
 
 void Device::loop()
