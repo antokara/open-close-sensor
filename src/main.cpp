@@ -14,6 +14,14 @@ void setup()
   device->setup();
   sensor = new Sensor(device);
   sensor->setup();
+  if (!device->has_fault())
+  {
+    Serial.println("Setup completed successfully.");
+  }
+  else
+  {
+    Serial.println("Setup failed!");
+  }
 }
 
 void loop()
@@ -24,6 +32,7 @@ void loop()
     // do not proceed if in fault state
     return;
   }
+
   sensor->loop();
   if (sensor->isUpdated())
   {
