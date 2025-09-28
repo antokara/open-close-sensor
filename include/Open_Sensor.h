@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <SparkFun_TMAG5273_Arduino_Library.h>
 #include <Device.h>
+#include "Mag_Sensor.h"
 
 /**
  * Open_Sensor class to interface with the open/close sensor
@@ -15,8 +16,13 @@ private:
      */
     Device *device_;
 
+    /**
+     * pointer to Mag_Sensor instance (for magnetic field readings)
+     */
+    Mag_Sensor *mag_sensor_;
+
 public:
-    Open_Sensor(Device *device);
+    Open_Sensor(Device *device, Mag_Sensor *mag_sensor);
 
     /**
      * initialize Open_Sensor
