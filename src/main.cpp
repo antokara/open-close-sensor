@@ -1,5 +1,6 @@
 #include <Wire.h> // Used to establish serial communication on the I2C bus
 #include <Arduino.h>
+#include <Device.h>
 #include <SparkFun_TMAG5273_Arduino_Library.h>
 
 TMAG5273 sensor; // Initialize hall-effect sensor
@@ -12,33 +13,38 @@ float oldMagY = 0;
 float oldMagZ = 0;
 float delta = 1.5;
 
+// Device instance
+Device *device;
+
 void setup()
 {
+  device = new Device();
+  device->setup();
+
   Wire.begin();
   delay(5000);
 
   // Start serial communication at 115200 baud
   Serial.begin(115200);
 
-  // Begin example of the magnetic sensor code (and add whitespace for easy reading)
-  Serial.println("TMAG5273 Example 1: Basic Readings");
-  Serial.println("");
-
   // If begin is successful (1), then start example
-  if (sensor.begin(i2cAddress, Wire) == 1)
+  if (sensor.begin(i2cAddress, Wire) != 1)
   {
-    Serial.println("Begin");
-  }
-  else // Otherwise, infinite loop
-  {
+    // failure
     Serial.println("Device failed to setup - Freezing code.");
-    while (1)
-      ; // Runs forever
+    device->set_fault(true);
   }
 }
 
 void loop()
 {
+  device->loop();
+  if (device->has_fault())
+  {
+    // do not proceed if in fault state
+    return;
+  }
+
   // Checks if mag channels are on - turns on in setup
   if (sensor.getMagneticChannel() != 0)
   {
@@ -64,8 +70,7 @@ void loop()
   {
     // If there is an issue, stop the magnetic readings and restart sensor/example
     Serial.println("Mag Channels disabled, stopping..");
-    while (1)
-      ;
+    device->set_fault(true);
   }
 
   delay(100);
