@@ -5,6 +5,9 @@ Device::Device() {}
 void Device::setup()
 {
     pinMode(LED_BUILTIN, OUTPUT);
+
+    // Start serial communication at 115200 baud
+    Serial.begin(115200);
 }
 
 void Device::loop()
