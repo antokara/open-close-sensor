@@ -9,7 +9,10 @@
  */
 #define MAGNETIC_DELTA_THRESHOLD 1.5
 
-class Sensor
+/**
+ * Mag_Sensor class to interface with the TMAG5273 magnetic sensor
+ */
+class Mag_Sensor
 {
 private:
     /**
@@ -28,18 +31,18 @@ private:
     float oldMagZ_ = 0;
 
     /**
-     * true if sensor values were updated in last loop()
+     * true if Mag_Sensor values were updated in last loop()
      * with significant change
      */
     bool updated_ = false;
 
     /**
-     * TMAG5273 sensor instance
+     * TMAG5273 Mag_Sensor instance
      */
-    TMAG5273 sensor_;
+    TMAG5273 Mag_Sensor_;
 
     /**
-     * I2C address of the TMAG5273 sensor
+     * I2C address of the TMAG5273 Mag_Sensor
      */
     uint8_t i2cAddress_ = TMAG5273_I2C_ADDRESS_INITIAL;
 
@@ -49,16 +52,16 @@ private:
     Device *device_;
 
 public:
-    Sensor(Device *device);
+    Mag_Sensor(Device *device);
 
     /**
-     * initialize Sensor (e.g. pin modes).
+     * initialize Mag_Sensor
      * Should be called in Arduino setup()
      */
     void setup();
 
     /**
-     * process Sensor state (e.g. update sensor values).
+     * process Mag_Sensor state
      * should be called in Arduino loop()
      */
     void loop();
@@ -79,7 +82,7 @@ public:
     float getMagZ();
 
     /**
-     * returns true if sensor values were updated in last loop()
+     * returns true if Mag_Sensor values were updated in last loop()
      * with significant change
      */
     bool isUpdated();

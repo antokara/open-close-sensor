@@ -1,19 +1,19 @@
 #include <Arduino.h>
 #include <Device.h>
-#include <Sensor.h>
+#include <Mag_Sensor.h>
 
 // Device instance
 Device *device;
 
-// Sensor instance
-Sensor *sensor;
+// Mag_Sensor instance
+Mag_Sensor *mag_Sensor;
 
 void setup()
 {
   device = new Device();
   device->setup();
-  sensor = new Sensor(device);
-  sensor->setup();
+  mag_Sensor = new Mag_Sensor(device);
+  mag_Sensor->setup();
   if (!device->has_fault())
   {
     Serial.println("Setup completed successfully.");
@@ -33,14 +33,14 @@ void loop()
     return;
   }
 
-  sensor->loop();
-  if (sensor->isUpdated())
+  mag_Sensor->loop();
+  if (mag_Sensor->isUpdated())
   {
     Serial.print("MagX: ");
-    Serial.print(sensor->getMagX());
+    Serial.print(mag_Sensor->getMagX());
     Serial.print(" MagY: ");
-    Serial.print(sensor->getMagY());
+    Serial.print(mag_Sensor->getMagY());
     Serial.print(" MagZ: ");
-    Serial.println(sensor->getMagZ());
+    Serial.println(mag_Sensor->getMagZ());
   }
 }

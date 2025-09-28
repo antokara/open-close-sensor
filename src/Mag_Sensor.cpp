@@ -1,24 +1,24 @@
-#include "Sensor.h"
+#include "Mag_Sensor.h"
 
-Sensor::Sensor(Device *device)
+Mag_Sensor::Mag_Sensor(Device *device)
 {
     this->device_ = device;
 }
 
-void Sensor::setup()
+void Mag_Sensor::setup()
 {
     Wire.begin();
 
     // If begin is successful (1), then start example
-    if (sensor_.begin(i2cAddress_, Wire) != 1)
+    if (Mag_Sensor_.begin(i2cAddress_, Wire) != 1)
     {
         // failure
-        Serial.println("Device failed to setup - Freezing code.");
+        Serial.println("Mag_Sensor failed to setup - Freezing code.");
         this->device_->set_fault(true);
     }
 }
 
-void Sensor::loop()
+void Mag_Sensor::loop()
 {
     if (this->updated_)
     {
@@ -26,11 +26,11 @@ void Sensor::loop()
     }
 
     // Checks if mag channels are on - turns on in setup
-    if (sensor_.getMagneticChannel() != 0)
+    if (Mag_Sensor_.getMagneticChannel() != 0)
     {
-        float magX = sensor_.getXData();
-        float magY = sensor_.getYData();
-        float magZ = sensor_.getZData();
+        float magX = Mag_Sensor_.getXData();
+        float magY = Mag_Sensor_.getYData();
+        float magZ = Mag_Sensor_.getZData();
         if (abs(magX - oldMagX_) >= MAGNETIC_DELTA_THRESHOLD || abs(magY - oldMagY_) >= MAGNETIC_DELTA_THRESHOLD || abs(magZ - oldMagZ_) >= MAGNETIC_DELTA_THRESHOLD)
         {
             oldMagX_ = magX;
@@ -41,28 +41,28 @@ void Sensor::loop()
     }
     else
     {
-        // If there is an issue, stop the magnetic readings and restart sensor/example
+        // If there is an issue, stop the magnetic readings and restart Mag_Sensor/example
         Serial.println("Mag Channels disabled, stopping..");
         device_->set_fault(true);
     }
 }
 
-float Sensor::getMagX()
+float Mag_Sensor::getMagX()
 {
     return oldMagX_;
 }
 
-float Sensor::getMagY()
+float Mag_Sensor::getMagY()
 {
     return oldMagY_;
 }
 
-float Sensor::getMagZ()
+float Mag_Sensor::getMagZ()
 {
     return oldMagZ_;
 }
 
-bool Sensor::isUpdated()
+bool Mag_Sensor::isUpdated()
 {
     return this->updated_;
 }
