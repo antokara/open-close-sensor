@@ -7,7 +7,7 @@
 /**
  * threshold for magnetic field change to be considered significant
  */
-#define MAGNETIC_DELTA_THRESHOLD 0.5
+#define MAGNETIC_DELTA_THRESHOLD 0.25
 
 /**
  * Mag_Sensor class to interface with the TMAG5273 magnetic sensor

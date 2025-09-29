@@ -29,17 +29,17 @@ void Open_Sensor::loop()
     }
 
     bool updated = false;
-    if (abs(this->old_filtered_mag_x_ - this->mag_x_filter_->get()) >= MAGNETIC_DELTA_THRESHOLD)
+    if (abs(this->old_filtered_mag_x_ - this->mag_x_filter_->get()) >= OPEN_SENSOR_DELTA_THRESHOLD)
     {
         updated = true;
         this->old_filtered_mag_x_ = this->mag_x_filter_->get();
     }
-    if (abs(this->old_filtered_mag_y_ - this->mag_y_filter_->get()) >= MAGNETIC_DELTA_THRESHOLD)
+    if (abs(this->old_filtered_mag_y_ - this->mag_y_filter_->get()) >= OPEN_SENSOR_DELTA_THRESHOLD)
     {
         updated = true;
         this->old_filtered_mag_y_ = this->mag_y_filter_->get();
     }
-    if (abs(this->old_filtered_mag_z_ - this->mag_z_filter_->get()) >= MAGNETIC_DELTA_THRESHOLD)
+    if (abs(this->old_filtered_mag_z_ - this->mag_z_filter_->get()) >= OPEN_SENSOR_DELTA_THRESHOLD)
     {
         updated = true;
         this->old_filtered_mag_z_ = this->mag_z_filter_->get();
