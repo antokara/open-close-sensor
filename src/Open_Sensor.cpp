@@ -45,6 +45,22 @@ void Open_Sensor::loop()
         this->old_filtered_mag_z_ = this->mag_z_filter_->get();
     }
 
+    if (this->state_ == STATE_UNKNOWN || updated)
+    {
+
+        if (abs(0 - this->mag_x_filter_->get()) <= CLOSE_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= CLOSE_THRESHOLD &&
+            abs(0 - this->mag_z_filter_->get()) <= CLOSE_THRESHOLD)
+        {
+            Serial.println("OPEN");
+            this->state_ = STATE_OPEN;
+        }
+        else
+        {
+            Serial.println("CLOSED");
+            this->state_ = STATE_CLOSED;
+        }
+    }
+
     if (updated)
     {
         Serial.print("MagX: ");
@@ -56,6 +72,10 @@ void Open_Sensor::loop()
     }
 }
 
+Open_Sensor_State Open_Sensor::get_state()
+{
+    return this->state_;
+}
 /**
  * ignore pulses, since those could be:
  *    - the sensor stabilizing

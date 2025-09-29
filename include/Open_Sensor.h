@@ -8,6 +8,21 @@
 
 #define OPEN_SENSOR_FILTER_WINDOW_SIZE 15
 
+#define CLOSE_THRESHOLD 1.0
+#define OPEN_THRESHOLD 5.0
+
+/**
+ * possible states of the open/close sensor
+ */
+enum Open_Sensor_State
+{
+    STATE_UNKNOWN = 0,
+    STATE_OPENING = 1,
+    STATE_OPEN = 2,
+    STATE_CLOSING = 3,
+    STATE_CLOSED = 4
+};
+
 /**
  * Open_Sensor class to interface with the open/close sensor
  */
@@ -54,6 +69,11 @@ private:
      */
     float old_filtered_mag_z_ = 0;
 
+    /**
+     * current state of the open/close sensor
+     */
+    Open_Sensor_State state_ = STATE_UNKNOWN;
+
 public:
     Open_Sensor(Device *device, Mag_Sensor *mag_sensor);
 
@@ -68,4 +88,9 @@ public:
      * should be called in Arduino loop()
      */
     void loop();
+
+    /**
+     * get current state of the open/close sensor
+     */
+    Open_Sensor_State get_state();
 };
