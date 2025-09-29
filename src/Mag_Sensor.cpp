@@ -20,9 +20,17 @@ void Mag_Sensor::setup()
 
 void Mag_Sensor::loop()
 {
-    if (this->updated_)
+    if (this->updated_x_)
     {
-        this->updated_ = false;
+        this->updated_x_ = false;
+    }
+    if (this->updated_y_)
+    {
+        this->updated_y_ = false;
+    }
+    if (this->updated_z_)
+    {
+        this->updated_z_ = false;
     }
 
     // Checks if mag channels are on - turns on in setup
@@ -31,12 +39,20 @@ void Mag_Sensor::loop()
         float magX = Mag_Sensor_.getXData();
         float magY = Mag_Sensor_.getYData();
         float magZ = Mag_Sensor_.getZData();
-        if (abs(magX - oldMagX_) >= MAGNETIC_DELTA_THRESHOLD || abs(magY - oldMagY_) >= MAGNETIC_DELTA_THRESHOLD || abs(magZ - oldMagZ_) >= MAGNETIC_DELTA_THRESHOLD)
+        if (abs(magX - oldMagX_) >= MAGNETIC_DELTA_THRESHOLD)
         {
             oldMagX_ = magX;
+            this->updated_x_ = true;
+        }
+        if (abs(magY - oldMagY_) >= MAGNETIC_DELTA_THRESHOLD)
+        {
             oldMagY_ = magY;
+            this->updated_y_ = true;
+        }
+        if (abs(magZ - oldMagZ_) >= MAGNETIC_DELTA_THRESHOLD)
+        {
             oldMagZ_ = magZ;
-            this->updated_ = true;
+            this->updated_z_ = true;
         }
     }
     else
@@ -47,22 +63,32 @@ void Mag_Sensor::loop()
     }
 }
 
-float Mag_Sensor::getMagX()
+float Mag_Sensor::get_mag_x()
 {
     return oldMagX_;
 }
 
-float Mag_Sensor::getMagY()
+float Mag_Sensor::get_mag_y()
 {
     return oldMagY_;
 }
 
-float Mag_Sensor::getMagZ()
+float Mag_Sensor::get_mag_z()
 {
     return oldMagZ_;
 }
 
-bool Mag_Sensor::isUpdated()
+bool Mag_Sensor::is_x_updated()
 {
-    return this->updated_;
+    return this->updated_x_;
+}
+
+bool Mag_Sensor::is_y_updated()
+{
+    return this->updated_y_;
+}
+
+bool Mag_Sensor::is_z_updated()
+{
+    return this->updated_z_;
 }

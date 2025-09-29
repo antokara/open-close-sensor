@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include <Device.h>
-#include <Mag_Sensor.h>
-#include <Open_Sensor.h>
+#include "Device.h"
+#include "Mag_Sensor.h"
+#include "Open_Sensor.h"
 
 // Device instance
 Device *device;

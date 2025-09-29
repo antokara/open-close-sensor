@@ -50,4 +50,6 @@ public:
      * set or clear fault state
      */
     void set_fault(bool fault);
+
+    // TODO: add logging functionality with different levels
 };
