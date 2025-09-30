@@ -45,11 +45,11 @@ void Open_Sensor::loop()
         this->old_filtered_mag_z_ = this->mag_z_filter_->get();
     }
 
-    if (this->state_ == STATE_UNKNOWN || updated)
+    if (this->state_ == STATE_UNKNOWN)
     {
 
-        if (abs(0 - this->mag_x_filter_->get()) <= CLOSE_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= CLOSE_THRESHOLD &&
-            abs(0 - this->mag_z_filter_->get()) <= CLOSE_THRESHOLD)
+        if (abs(0 - this->mag_x_filter_->get()) <= OPEN_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= OPEN_THRESHOLD &&
+            abs(0 - this->mag_z_filter_->get()) <= OPEN_THRESHOLD)
         {
             Serial.println("OPEN");
             this->state_ = STATE_OPEN;
@@ -58,6 +58,48 @@ void Open_Sensor::loop()
         {
             Serial.println("CLOSED");
             this->state_ = STATE_CLOSED;
+        }
+    }
+    else if (this->state_ == STATE_OPEN)
+    {
+
+        if (abs(0 - this->mag_x_filter_->get()) > OPEN_THRESHOLD || abs(0 - this->mag_y_filter_->get()) > OPEN_THRESHOLD ||
+            abs(0 - this->mag_z_filter_->get()) > OPEN_THRESHOLD)
+        {
+            Serial.println("CLOSING");
+            this->state_ = STATE_CLOSING;
+            // TODO: mark the magentic field change during closing, to know when the door moves due to the gap, if that's normal or tampering
+            // TODO: use the time to time out the closing event if it takes too long
+        }
+    }
+    else if (this->state_ == STATE_CLOSING)
+    {
+
+        if (abs(0 - this->mag_x_filter_->get()) > CLOSE_THRESHOLD || abs(0 - this->mag_y_filter_->get()) > CLOSE_THRESHOLD ||
+            abs(0 - this->mag_z_filter_->get()) > CLOSE_THRESHOLD)
+        {
+            Serial.println("CLOSED");
+            this->state_ = STATE_CLOSED;
+        }
+    }
+    else if (this->state_ == STATE_CLOSED)
+    {
+
+        if (abs(0 - this->mag_x_filter_->get()) <= CLOSE_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= CLOSE_THRESHOLD &&
+            abs(0 - this->mag_z_filter_->get()) <= CLOSE_THRESHOLD)
+        {
+            Serial.println("OPENING");
+            this->state_ = STATE_OPENING;
+        }
+    }
+    else if (this->state_ == STATE_OPENING)
+    {
+
+        if (abs(0 - this->mag_x_filter_->get()) <= OPEN_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= OPEN_THRESHOLD &&
+            abs(0 - this->mag_z_filter_->get()) <= OPEN_THRESHOLD)
+        {
+            Serial.println("OPEN");
+            this->state_ = STATE_OPEN;
         }
     }
 

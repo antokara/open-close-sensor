@@ -9,8 +9,8 @@
 #define OPEN_SENSOR_FILTER_WINDOW_SIZE 10
 #define OPEN_SENSOR_DELTA_THRESHOLD 0.5
 
-#define CLOSE_THRESHOLD 1.0
-#define OPEN_THRESHOLD 5.0
+#define CLOSE_THRESHOLD 5.0
+#define OPEN_THRESHOLD 1.5
 
 /**
  * possible states of the open/close sensor
