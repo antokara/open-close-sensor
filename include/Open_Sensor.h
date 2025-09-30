@@ -9,7 +9,16 @@
 #define OPEN_SENSOR_FILTER_WINDOW_SIZE 10
 #define OPEN_SENSOR_DELTA_THRESHOLD 0.5
 
+/**
+ * when the magnetic field is larger than this value,
+ * the sensor is considered closed
+ */
 #define CLOSE_THRESHOLD 5.0
+
+/**
+ * when the magnetic field is smaller than this value,
+ * the sensor is considered open
+ */
 #define OPEN_THRESHOLD 1.5
 
 /**
