@@ -114,3 +114,8 @@ void Device::check_calibration_button()
         this->calibration_toggled_ = false;
     }
 }
+
+bool Device::is_calibrating()
+{
+    return this->is_calibrating_;
+}

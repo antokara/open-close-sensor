@@ -129,4 +129,9 @@ public:
      * stop calibration mode
      */
     void stop_calibration();
+
+    /**
+     * returns true if device is in calibration mode
+     */
+    bool is_calibrating()
 };

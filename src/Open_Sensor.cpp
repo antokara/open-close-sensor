@@ -4,6 +4,17 @@ Open_Sensor::Open_Sensor(Device *device, Mag_Sensor *mag_sensor)
 {
     this->device_ = device;
     this->mag_sensor_ = mag_sensor;
+
+    /**
+     * ignore pulses, since those could be:
+     *    - the sensor stabilizing
+     *    - environmental magnetic noise (burst of constant)
+     * a pulse is any sudden change in the magnetic field
+     * that is not sustained and goes back close to previous value.
+     *
+     * how? use a moving average filter to smooth out the readings
+     * and only consider a change if the smoothed value changes
+     */
     this->mag_x_filter_ = new Moving_Average(OPEN_SENSOR_FILTER_WINDOW_SIZE);
     this->mag_y_filter_ = new Moving_Average(OPEN_SENSOR_FILTER_WINDOW_SIZE);
     this->mag_z_filter_ = new Moving_Average(OPEN_SENSOR_FILTER_WINDOW_SIZE);
@@ -119,18 +130,6 @@ Open_Sensor_State Open_Sensor::get_state()
 {
     return this->state_;
 }
-/**
- * ignore pulses, since those could be:
- *    - the sensor stabilizing
- *    - environmental magnetic noise (burst of constant)
- * a pulse is any sudden change in the magnetic field
- * that is not sustained and goes back close to previous value.
- *
- * how? use a moving average filter to smooth out the readings
- * and only consider a change if the smoothed value changes
- *
- * TODO: implement moving average filter
- */
 
 /**
  * determine if the sensor is open or closed:
