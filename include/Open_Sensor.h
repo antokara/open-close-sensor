@@ -5,6 +5,7 @@
 #include "Device.h"
 #include "Mag_Sensor.h"
 #include "Moving_Average.h"
+#include "XYZPointList.h"
 
 #define OPEN_SENSOR_FILTER_WINDOW_SIZE 10
 #define OPEN_SENSOR_DELTA_THRESHOLD 0.5
@@ -20,6 +21,11 @@
  * the sensor is considered open
  */
 #define OPEN_THRESHOLD 1.5
+
+/**
+ * maximum number of calibration points to store
+ */
+#define MAX_CALIBRATION_POINTS 30
 
 /**
  * possible states of the open/close sensor
@@ -83,6 +89,11 @@ private:
      * current state of the open/close sensor
      */
     Open_Sensor_State state_ = STATE_UNKNOWN;
+
+    /**
+     * list of recent (x,y,z) magnetic field points from calibration
+     */
+    XYZPointList *xyzPointList_{nullptr};
 
 public:
     Open_Sensor(Device *device, Mag_Sensor *mag_sensor);

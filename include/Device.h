@@ -133,5 +133,5 @@ public:
     /**
      * returns true if device is in calibration mode
      */
-    bool is_calibrating()
+    bool is_calibrating();
 };

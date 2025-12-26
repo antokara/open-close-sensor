@@ -4,6 +4,7 @@ Open_Sensor::Open_Sensor(Device *device, Mag_Sensor *mag_sensor)
 {
     this->device_ = device;
     this->mag_sensor_ = mag_sensor;
+    this->xyzPointList_ = new XYZPointList(MAX_CALIBRATION_POINTS);
 
     /**
      * ignore pulses, since those could be:
@@ -117,6 +118,10 @@ void Open_Sensor::loop()
 
     if (updated)
     {
+        // if (this->device_->is_calibrating())
+        // {
+        // }
+
         // report for debugging
         this->device_->log(String(this->mag_x_filter_->get()));
         this->device_->log("\t");
