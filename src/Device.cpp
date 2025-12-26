@@ -24,15 +24,7 @@ void Device::setup()
 
 void Device::loop()
 {
-    if (this->has_fault_)
-    {
-        uint32_t now = millis();
-        if (now - this->last_led_toggle_ >= FAULT_LED_BLINK_INTERVAL_MS)
-        {
-            digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-            this->last_led_toggle_ = now;
-        }
-    }
+    this->check_fault();
     this->check_calibration_button();
 }
 
@@ -47,6 +39,19 @@ void Device::set_fault(bool fault)
     if (!fault)
     {
         digitalWrite(LED_BUILTIN, HIGH);
+    }
+}
+
+void Device::check_fault()
+{
+    if (this->has_fault_)
+    {
+        uint32_t now = millis();
+        if (now - this->last_led_toggle_ >= FAULT_LED_BLINK_INTERVAL_MS)
+        {
+            digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+            this->last_led_toggle_ = now;
+        }
     }
 }
 

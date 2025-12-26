@@ -57,6 +57,11 @@ private:
     uint32_t last_led_toggle_{0};
 
     /**
+     * check and handle fault state (e.g. blink LED)
+     */
+    void check_fault();
+
+    /**
      * true if device is in calibration mode
      */
     bool is_calibrating_{false};
