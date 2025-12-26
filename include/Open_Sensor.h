@@ -7,20 +7,17 @@
 #include "Moving_Average.h"
 #include "XYZPointList.h"
 
+/**
+ * size of the moving average filter window
+ * used to filter the magnetic field readings
+ */
 #define OPEN_SENSOR_FILTER_WINDOW_SIZE 10
+
+/**
+ * threshold for significant change
+ * in the filtered magnetic field readings
+ */
 #define OPEN_SENSOR_DELTA_THRESHOLD 0.5
-
-/**
- * when the magnetic field is larger than this value,
- * the sensor is considered closed
- */
-#define CLOSE_THRESHOLD 5.0
-
-/**
- * when the magnetic field is smaller than this value,
- * the sensor is considered open
- */
-#define OPEN_THRESHOLD 1.5
 
 /**
  * maximum number of calibration points to store
@@ -28,15 +25,23 @@
 #define MAX_CALIBRATION_POINTS 30
 
 /**
+ * threshold distance to consider a calibration point
+ * as matching an existing point
+ *
+ * (the higher the value, the more likely a match is found and
+ * thus, the more forgiving it is to slight variations in the magnetic field)
+ */
+#define CALIBRATION_POINT_THRESHOLD 0.75
+
+/**
  * possible states of the open/close sensor
  */
 enum Open_Sensor_State
 {
     STATE_UNKNOWN = 0,
-    STATE_OPENING = 1,
-    STATE_OPEN = 2,
-    STATE_CLOSING = 3,
-    STATE_CLOSED = 4
+    STATE_OPEN = 1,
+    STATE_CLOSED = 2,
+    STATE_TAMPERED = 3
 };
 
 /**
@@ -93,7 +98,12 @@ private:
     /**
      * list of recent (x,y,z) magnetic field points from calibration
      */
-    XYZPointList *xyzPointList_{nullptr};
+    XYZPointList *calibrationPoints_{nullptr};
+
+    /**
+     * true if sensor is in calibration mode
+     */
+    bool is_calibrating_{false};
 
 public:
     Open_Sensor(Device *device, Mag_Sensor *mag_sensor);

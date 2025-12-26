@@ -4,7 +4,7 @@ Open_Sensor::Open_Sensor(Device *device, Mag_Sensor *mag_sensor)
 {
     this->device_ = device;
     this->mag_sensor_ = mag_sensor;
-    this->xyzPointList_ = new XYZPointList(MAX_CALIBRATION_POINTS);
+    this->calibrationPoints_ = new XYZPointList(MAX_CALIBRATION_POINTS);
 
     /**
      * ignore pulses, since those could be:
@@ -40,94 +40,101 @@ void Open_Sensor::loop()
         this->mag_z_filter_->add(this->mag_sensor_->get_mag_z());
     }
 
+    // get filtered magnetic values
+    float filtered_mag_x = this->mag_x_filter_->get();
+    float filtered_mag_y = this->mag_y_filter_->get();
+    float filtered_mag_z = this->mag_z_filter_->get();
+    // check for significant changes
     bool updated = false;
-    if (abs(this->old_filtered_mag_x_ - this->mag_x_filter_->get()) >= OPEN_SENSOR_DELTA_THRESHOLD)
+    if (abs(this->old_filtered_mag_x_ - filtered_mag_x) >= OPEN_SENSOR_DELTA_THRESHOLD)
     {
         updated = true;
-        this->old_filtered_mag_x_ = this->mag_x_filter_->get();
+        this->old_filtered_mag_x_ = filtered_mag_x;
     }
-    if (abs(this->old_filtered_mag_y_ - this->mag_y_filter_->get()) >= OPEN_SENSOR_DELTA_THRESHOLD)
+    if (abs(this->old_filtered_mag_y_ - filtered_mag_y) >= OPEN_SENSOR_DELTA_THRESHOLD)
     {
         updated = true;
-        this->old_filtered_mag_y_ = this->mag_y_filter_->get();
+        this->old_filtered_mag_y_ = filtered_mag_y;
     }
-    if (abs(this->old_filtered_mag_z_ - this->mag_z_filter_->get()) >= OPEN_SENSOR_DELTA_THRESHOLD)
+    if (abs(this->old_filtered_mag_z_ - filtered_mag_z) >= OPEN_SENSOR_DELTA_THRESHOLD)
     {
         updated = true;
-        this->old_filtered_mag_z_ = this->mag_z_filter_->get();
-    }
-
-    if (this->state_ == STATE_UNKNOWN)
-    {
-
-        if (abs(0 - this->mag_x_filter_->get()) <= OPEN_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= OPEN_THRESHOLD &&
-            abs(0 - this->mag_z_filter_->get()) <= OPEN_THRESHOLD)
-        {
-            this->device_->log("OPEN", true, DEBUG_LEVEL_INFO);
-            this->state_ = STATE_OPEN;
-        }
-        else
-        {
-            this->device_->log("CLOSED", true, DEBUG_LEVEL_INFO);
-            this->state_ = STATE_CLOSED;
-        }
-    }
-    else if (this->state_ == STATE_OPEN)
-    {
-
-        if (abs(0 - this->mag_x_filter_->get()) > OPEN_THRESHOLD || abs(0 - this->mag_y_filter_->get()) > OPEN_THRESHOLD ||
-            abs(0 - this->mag_z_filter_->get()) > OPEN_THRESHOLD)
-        {
-            this->device_->log("CLOSING", true, DEBUG_LEVEL_INFO);
-            this->state_ = STATE_CLOSING;
-            // TODO: mark the magentic field change during closing, to know when the door moves due to the gap, if that's normal or tampering
-            // TODO: use the time to time out the closing event if it takes too long
-            // TODO: handle ajar state with opening/closing timeout;
-        }
-    }
-    else if (this->state_ == STATE_CLOSING)
-    {
-
-        if (abs(0 - this->mag_x_filter_->get()) > CLOSE_THRESHOLD || abs(0 - this->mag_y_filter_->get()) > CLOSE_THRESHOLD ||
-            abs(0 - this->mag_z_filter_->get()) > CLOSE_THRESHOLD)
-        {
-            this->device_->log("CLOSED", true, DEBUG_LEVEL_INFO);
-            this->state_ = STATE_CLOSED;
-        }
-    }
-    else if (this->state_ == STATE_CLOSED)
-    {
-
-        if (abs(0 - this->mag_x_filter_->get()) <= CLOSE_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= CLOSE_THRESHOLD &&
-            abs(0 - this->mag_z_filter_->get()) <= CLOSE_THRESHOLD)
-        {
-            this->device_->log("OPENING", true, DEBUG_LEVEL_INFO);
-            this->state_ = STATE_OPENING;
-        }
-    }
-    else if (this->state_ == STATE_OPENING)
-    {
-
-        if (abs(0 - this->mag_x_filter_->get()) <= OPEN_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= OPEN_THRESHOLD &&
-            abs(0 - this->mag_z_filter_->get()) <= OPEN_THRESHOLD)
-        {
-            this->device_->log("OPEN", true, DEBUG_LEVEL_INFO);
-            this->state_ = STATE_OPEN;
-        }
+        this->old_filtered_mag_z_ = filtered_mag_z;
     }
 
     if (updated)
     {
+        // handle calibration mode
         if (this->device_->is_calibrating())
         {
+            if (!this->is_calibrating_)
+            {
+                // just entered calibration mode
+                this->is_calibrating_ = true;
+                this->calibrationPoints_->clear();
+                this->device_->log("Open_Sensor: started calibration - clearing previous points", true, DEBUG_LEVEL_INFO);
+            }
+            int index = this->calibrationPoints_->find(
+                filtered_mag_x,
+                filtered_mag_y,
+                filtered_mag_z,
+                0,
+                CALIBRATION_POINT_THRESHOLD);
+            if (index == -1)
+            {
+                this->device_->log("Open_Sensor: adding new calibration point", true, DEBUG_LEVEL_INFO);
+                this->calibrationPoints_->add(filtered_mag_x, filtered_mag_y, filtered_mag_z);
+            }
+            else
+            {
+                this->device_->log("Open_Sensor: calibration point already exists with index " + String(index), true, DEBUG_LEVEL_INFO);
+            }
+        }
+        else if (this->is_calibrating_)
+        {
+            // just exited calibration mode
+            this->is_calibrating_ = false;
+            this->device_->log("Open_Sensor: exited calibration mode", true, DEBUG_LEVEL_INFO);
+            // TODO: report the collected calibration points
+
+            // TODO: save calibration points to non-volatile storage
+        }
+        else
+        {
+            // normal operation
+            int index = this->calibrationPoints_->find(
+                filtered_mag_x,
+                filtered_mag_y,
+                filtered_mag_z,
+                0,
+                CALIBRATION_POINT_THRESHOLD);
+            if (index != -1)
+            {
+                if (index > (int)this->calibrationPoints_->size() / 2)
+                {
+                    this->state_ = STATE_OPEN;
+                    this->device_->log("Open_Sensor: OPEN " + String(index), true, DEBUG_LEVEL_INFO);
+                }
+                else
+                {
+                    this->state_ = STATE_CLOSED;
+                    this->device_->log("Open_Sensor: CLOSED", true, DEBUG_LEVEL_INFO);
+                }
+            }
+            else
+            {
+                // TODO: add tampering detection if no calibration point matches;
+                this->device_->log("Open_Sensor: TAMPERED state", true, DEBUG_LEVEL_ERROR);
+                this->state_ = STATE_TAMPERED;
+            }
         }
 
         // report for debugging
-        this->device_->log(String(this->mag_x_filter_->get()));
-        this->device_->log("\t");
-        this->device_->log(String(this->mag_y_filter_->get()));
-        this->device_->log("\t");
-        this->device_->log(String(this->mag_z_filter_->get()), true);
+        // this->device_->log(String(filtered_mag_x));
+        // this->device_->log("\t");
+        // this->device_->log(String(filtered_mag_y));
+        // this->device_->log("\t");
+        // this->device_->log(String(filtered_mag_z), true);
     }
 }
 

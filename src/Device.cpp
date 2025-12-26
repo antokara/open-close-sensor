@@ -20,6 +20,9 @@ void Device::setup()
     {
         this->log("Failed to start touch sensor for the Calibration Input", true, DEBUG_LEVEL_ERROR);
     }
+
+    // TODO: remove
+    this->start_calibration();
 }
 
 void Device::loop()

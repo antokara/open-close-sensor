@@ -5,7 +5,7 @@
 #include "Device.h"
 
 /**
- * threshold for magnetic field change to be considered significant
+ * threshold for the raw magnetic field change to be considered significant
  */
 #define MAGNETIC_DELTA_THRESHOLD 0.25
 
