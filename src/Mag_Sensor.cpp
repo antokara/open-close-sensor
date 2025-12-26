@@ -13,7 +13,7 @@ void Mag_Sensor::setup()
     if (Mag_Sensor_.begin(i2cAddress_, Wire) != 1)
     {
         // failure
-        Serial.println("Mag_Sensor failed to setup - Freezing code.");
+        this->device_->log("Mag_Sensor failed to setup - Freezing code.", true, DEBUG_LEVEL_ERROR);
         this->device_->set_fault(true);
     }
 }
@@ -58,8 +58,8 @@ void Mag_Sensor::loop()
     else
     {
         // If there is an issue, stop the magnetic readings and restart Mag_Sensor/example
-        Serial.println("Mag Channels disabled, stopping..");
-        device_->set_fault(true);
+        this->device_->log("Mag Channels disabled, stopping..", true, DEBUG_LEVEL_ERROR);
+        this->device_->set_fault(true);
     }
 }
 

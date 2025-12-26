@@ -22,11 +22,11 @@ void setup()
   open_Sensor->setup();
   if (!device->has_fault())
   {
-    Serial.println("Setup completed successfully.");
+    device->log("Setup completed successfully.", true, DEBUG_LEVEL_INFO);
   }
   else
   {
-    Serial.println("Setup failed!");
+    device->log("Setup failed!", true, DEBUG_LEVEL_ERROR);
   }
 }
 

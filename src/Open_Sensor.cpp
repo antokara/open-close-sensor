@@ -63,12 +63,12 @@ void Open_Sensor::loop()
         if (abs(0 - this->mag_x_filter_->get()) <= OPEN_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= OPEN_THRESHOLD &&
             abs(0 - this->mag_z_filter_->get()) <= OPEN_THRESHOLD)
         {
-            Serial.println("OPEN");
+            this->device_->log("OPEN", true, DEBUG_LEVEL_INFO);
             this->state_ = STATE_OPEN;
         }
         else
         {
-            Serial.println("CLOSED");
+            this->device_->log("CLOSED", true, DEBUG_LEVEL_INFO);
             this->state_ = STATE_CLOSED;
         }
     }
@@ -78,7 +78,7 @@ void Open_Sensor::loop()
         if (abs(0 - this->mag_x_filter_->get()) > OPEN_THRESHOLD || abs(0 - this->mag_y_filter_->get()) > OPEN_THRESHOLD ||
             abs(0 - this->mag_z_filter_->get()) > OPEN_THRESHOLD)
         {
-            Serial.println("CLOSING");
+            this->device_->log("CLOSING", true, DEBUG_LEVEL_INFO);
             this->state_ = STATE_CLOSING;
             // TODO: mark the magentic field change during closing, to know when the door moves due to the gap, if that's normal or tampering
             // TODO: use the time to time out the closing event if it takes too long
@@ -91,7 +91,7 @@ void Open_Sensor::loop()
         if (abs(0 - this->mag_x_filter_->get()) > CLOSE_THRESHOLD || abs(0 - this->mag_y_filter_->get()) > CLOSE_THRESHOLD ||
             abs(0 - this->mag_z_filter_->get()) > CLOSE_THRESHOLD)
         {
-            Serial.println("CLOSED");
+            this->device_->log("CLOSED", true, DEBUG_LEVEL_INFO);
             this->state_ = STATE_CLOSED;
         }
     }
@@ -101,7 +101,7 @@ void Open_Sensor::loop()
         if (abs(0 - this->mag_x_filter_->get()) <= CLOSE_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= CLOSE_THRESHOLD &&
             abs(0 - this->mag_z_filter_->get()) <= CLOSE_THRESHOLD)
         {
-            Serial.println("OPENING");
+            this->device_->log("OPENING", true, DEBUG_LEVEL_INFO);
             this->state_ = STATE_OPENING;
         }
     }
@@ -111,16 +111,16 @@ void Open_Sensor::loop()
         if (abs(0 - this->mag_x_filter_->get()) <= OPEN_THRESHOLD && abs(0 - this->mag_y_filter_->get()) <= OPEN_THRESHOLD &&
             abs(0 - this->mag_z_filter_->get()) <= OPEN_THRESHOLD)
         {
-            Serial.println("OPEN");
+            this->device_->log("OPEN", true, DEBUG_LEVEL_INFO);
             this->state_ = STATE_OPEN;
         }
     }
 
     if (updated)
     {
-        // if (this->device_->is_calibrating())
-        // {
-        // }
+        if (this->device_->is_calibrating())
+        {
+        }
 
         // report for debugging
         this->device_->log(String(this->mag_x_filter_->get()));
