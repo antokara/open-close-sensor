@@ -19,6 +19,9 @@ public:
     // Remove all stored points.
     void clear();
 
+    // Sort points by absolute magnitude (largest first).
+    void sort();
+
     // Find a point matching (x,y,z) with fuzzy threshold starting at startIndex.
     // Returns the logical index (0..size()-1) if found, otherwise -1.
     int find(float x, float y, float z, size_t startIndex, float threshold) const;

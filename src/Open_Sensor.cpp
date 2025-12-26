@@ -4,7 +4,7 @@ Open_Sensor::Open_Sensor(Device *device, Mag_Sensor *mag_sensor)
 {
     this->device_ = device;
     this->mag_sensor_ = mag_sensor;
-    this->calibrationPoints_ = new XYZPointList(MAX_CALIBRATION_POINTS);
+    this->calibrationPoints_ = new XYZPointList(OPEN_SENSOR_MAX_CALIBRATION_POINTS);
 
     /**
      * ignore pulses, since those could be:
@@ -79,7 +79,7 @@ void Open_Sensor::loop()
                 filtered_mag_y,
                 filtered_mag_z,
                 0,
-                CALIBRATION_POINT_THRESHOLD);
+                OPEN_SENSOR_CALIBRATION_POINT_THRESHOLD);
             if (index == -1)
             {
                 this->device_->log("Open_Sensor: adding new calibration point", true, DEBUG_LEVEL_INFO);
@@ -95,6 +95,10 @@ void Open_Sensor::loop()
             // just exited calibration mode
             this->is_calibrating_ = false;
             this->device_->log("Open_Sensor: exited calibration mode", true, DEBUG_LEVEL_INFO);
+            // sort the calibration points by magnitude
+            // so that the largest absolute magnetic field (magnet is at its closest) is first at index 0, meaning sensor is at closed state
+            // and the smallest absolute magnetic field (magnet is at its furthest) is last, meaning sensor is at open state
+            this->calibrationPoints_->sort();
             // TODO: report the collected calibration points
 
             // TODO: save calibration points to non-volatile storage
@@ -107,24 +111,26 @@ void Open_Sensor::loop()
                 filtered_mag_y,
                 filtered_mag_z,
                 0,
-                CALIBRATION_POINT_THRESHOLD);
+                OPEN_SENSOR_CALIBRATION_POINT_THRESHOLD);
             if (index != -1)
             {
-                if (index > (int)this->calibrationPoints_->size() / 2)
+                // TODO: consider index distance comparison to determine tampering
+                //       (we can't jump from index 0, to index 15 all the sudden)
+                if (index > (int)this->calibrationPoints_->size() * OPEN_SENSOR_CALIBRATION_POINTS_DISTANCE_THRESHOLD_MULTIPLIER)
                 {
                     this->state_ = STATE_OPEN;
-                    this->device_->log("Open_Sensor: OPEN " + String(index), true, DEBUG_LEVEL_INFO);
+                    this->device_->log("Open_Sensor: OPEN, index: " + String(index), true, DEBUG_LEVEL_INFO);
                 }
                 else
                 {
                     this->state_ = STATE_CLOSED;
-                    this->device_->log("Open_Sensor: CLOSED", true, DEBUG_LEVEL_INFO);
+                    this->device_->log("Open_Sensor: CLOSED, index: " + String(index), true, DEBUG_LEVEL_INFO);
                 }
             }
             else
             {
                 // TODO: add tampering detection if no calibration point matches;
-                this->device_->log("Open_Sensor: TAMPERED state", true, DEBUG_LEVEL_ERROR);
+                this->device_->log("Open_Sensor: TAMPERED, invalid magnetic field detected!", true, DEBUG_LEVEL_ERROR);
                 this->state_ = STATE_TAMPERED;
             }
         }

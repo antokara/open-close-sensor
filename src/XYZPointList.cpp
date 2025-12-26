@@ -1,6 +1,7 @@
 #include "XYZPointList.h"
 #include <cmath>
 #include <cstring>
+#include <utility>
 
 XYZPointList::XYZPointList(size_t maxPoints)
     : m_x(nullptr), m_y(nullptr), m_z(nullptr), m_head(0), m_count(0), m_capacity(maxPoints)
@@ -42,6 +43,34 @@ void XYZPointList::clear()
 {
     m_head = 0;
     m_count = 0;
+}
+
+void XYZPointList::sort()
+{
+    if (m_count <= 1 || m_capacity == 0)
+        return;
+
+    size_t oldest = oldestIndex();
+
+    // Bubble sort by absolute magnitude (largest first)
+    for (size_t i = 0; i < m_count - 1; ++i)
+    {
+        for (size_t j = 0; j < m_count - i - 1; ++j)
+        {
+            size_t phys_j = (oldest + j) % m_capacity;
+            size_t phys_j1 = (oldest + j + 1) % m_capacity;
+
+            float mag_j = m_x[phys_j] * m_x[phys_j] + m_y[phys_j] * m_y[phys_j] + m_z[phys_j] * m_z[phys_j];
+            float mag_j1 = m_x[phys_j1] * m_x[phys_j1] + m_y[phys_j1] * m_y[phys_j1] + m_z[phys_j1] * m_z[phys_j1];
+
+            if (mag_j < mag_j1)
+            {
+                std::swap(m_x[phys_j], m_x[phys_j1]);
+                std::swap(m_y[phys_j], m_y[phys_j1]);
+                std::swap(m_z[phys_j], m_z[phys_j1]);
+            }
+        }
+    }
 }
 
 size_t XYZPointList::oldestIndex() const

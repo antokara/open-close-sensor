@@ -22,7 +22,7 @@
 /**
  * maximum number of calibration points to store
  */
-#define MAX_CALIBRATION_POINTS 30
+#define OPEN_SENSOR_MAX_CALIBRATION_POINTS 20
 
 /**
  * threshold distance to consider a calibration point
@@ -31,7 +31,25 @@
  * (the higher the value, the more likely a match is found and
  * thus, the more forgiving it is to slight variations in the magnetic field)
  */
-#define CALIBRATION_POINT_THRESHOLD 0.75
+#define OPEN_SENSOR_CALIBRATION_POINT_THRESHOLD 0.75
+
+/**
+ * minimum distance from the largest calibration point
+ * to consider the sensor as open, as a multiplier.
+ *
+ * @example 0.25 means the sensor needs to be at least
+ *          25% as far from the magnet (largest calibration point) to be considered open.
+ *          This will make the sensor more sensitive to opening.
+ *
+ * @example 0.5 means the sensor needs to be at least half as far
+ *          from the magnet (largest calibration point) to be considered open.
+ *          This is a balanced sensitivity.
+ *
+ * @example 0.75 means the sensor needs to be at least 75% as far
+ *          from the magnet (largest calibration point) to be considered open.
+ *          This will make the sensor less sensitive to opening.
+ */
+#define OPEN_SENSOR_CALIBRATION_POINTS_DISTANCE_THRESHOLD_MULTIPLIER 0.5
 
 /**
  * possible states of the open/close sensor
