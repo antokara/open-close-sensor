@@ -18,12 +18,12 @@ It features anti-tampering detection from external magnetic fields or removing o
 2. install the sensor on the door/window frame (stationary part)
     1. remove its cover (this will trigger a tamper alert pulse, on the digital output pin)
 3. install the magnet on the door/window (moving part)
-4. press & hold the calibration button for 10 seconds, until the blue LED turns on
-    1. release the button. The blue LED will remain on
+4. press & hold the calibration button for 10 seconds, until the yellow LED turns on
+    1. release the button. The yellow LED will remain on
 5. open the door/window all the way
-    1. the yellow LED should turn on and stay on
+    1. the blue LED should turn on and stay on
 6. close the door/window all the way
-    1. the yellow LED should turn of and stay off
+    1. the blue LED should turn of and stay off
 7. optional: repeat steps 5-6 for additional calibration
 8. press the calibration button to finish
-    1. the blue LED should turn off
+    1. the yellow LED should turn off
