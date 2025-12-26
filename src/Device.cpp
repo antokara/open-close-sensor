@@ -39,3 +39,14 @@ void Device::set_fault(bool fault)
         digitalWrite(LED_BUILTIN, LOW);
     }
 }
+
+void Device::log(const String &message, bool ln, Debug_Level level)
+{
+    if (level >= DEBUG_LEVEL)
+    {
+        if (ln)
+            Serial.println(message);
+        else
+            Serial.print(message);
+    }
+}

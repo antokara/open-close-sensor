@@ -13,6 +13,19 @@
  */
 #define SETUP_DELAY_MS 2500
 
+/**
+ * 0 = no debug messages, higher numbers = more verbose
+ */
+#define DEBUG_LEVEL DEBUG_LEVEL_INFO
+
+enum Debug_Level
+{
+    DEBUG_LEVEL_NONE = 0,
+    DEBUG_LEVEL_ERROR = 1,
+    DEBUG_LEVEL_INFO = 2,
+    DEBUG_LEVEL_VERBOSE = 3
+};
+
 class Device
 {
 private:
@@ -51,5 +64,8 @@ public:
      */
     void set_fault(bool fault);
 
-    // TODO: add logging functionality with different levels
+    /**
+     * log message to serial if level >= DEBUG_LEVEL
+     */
+    void log(const String &message, bool ln = true, Debug_Level level = DEBUG_LEVEL_INFO);
 };

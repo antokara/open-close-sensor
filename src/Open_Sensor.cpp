@@ -70,6 +70,7 @@ void Open_Sensor::loop()
             this->state_ = STATE_CLOSING;
             // TODO: mark the magentic field change during closing, to know when the door moves due to the gap, if that's normal or tampering
             // TODO: use the time to time out the closing event if it takes too long
+            // TODO: handle ajar state with opening/closing timeout;
         }
     }
     else if (this->state_ == STATE_CLOSING)
@@ -105,12 +106,12 @@ void Open_Sensor::loop()
 
     if (updated)
     {
-        Serial.print("MagX: ");
-        Serial.print(this->mag_x_filter_->get());
-        Serial.print(" MagY: ");
-        Serial.print(this->mag_y_filter_->get());
-        Serial.print(" MagZ: ");
-        Serial.println(this->mag_z_filter_->get());
+        // report for debugging
+        this->device_->log(String(this->mag_x_filter_->get()));
+        this->device_->log("\t");
+        this->device_->log(String(this->mag_y_filter_->get()));
+        this->device_->log("\t");
+        this->device_->log(String(this->mag_z_filter_->get()), true);
     }
 }
 
