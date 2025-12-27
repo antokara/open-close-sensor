@@ -30,6 +30,9 @@
  *
  * (the higher the value, the more likely a match is found and
  * thus, the more forgiving it is to slight variations in the magnetic field)
+ *
+ * @see MAG_SENSOR_DELTA_THRESHOLD
+ * @see OPEN_SENSOR_DELTA_THRESHOLD
  */
 #define OPEN_SENSOR_CALIBRATION_POINT_THRESHOLD 0.75
 

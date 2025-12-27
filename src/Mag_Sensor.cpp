@@ -39,17 +39,17 @@ void Mag_Sensor::loop()
         float magX = Mag_Sensor_.getXData();
         float magY = Mag_Sensor_.getYData();
         float magZ = Mag_Sensor_.getZData();
-        if (abs(magX - oldMagX_) >= MAGNETIC_DELTA_THRESHOLD)
+        if (abs(magX - oldMagX_) >= MAG_SENSOR_DELTA_THRESHOLD)
         {
             oldMagX_ = magX;
             this->updated_x_ = true;
         }
-        if (abs(magY - oldMagY_) >= MAGNETIC_DELTA_THRESHOLD)
+        if (abs(magY - oldMagY_) >= MAG_SENSOR_DELTA_THRESHOLD)
         {
             oldMagY_ = magY;
             this->updated_y_ = true;
         }
-        if (abs(magZ - oldMagZ_) >= MAGNETIC_DELTA_THRESHOLD)
+        if (abs(magZ - oldMagZ_) >= MAG_SENSOR_DELTA_THRESHOLD)
         {
             oldMagZ_ = magZ;
             this->updated_z_ = true;
